@@ -3,3 +3,7 @@ python-dotenv
 requests
 Pillow
 supabase
+gunicorn
+whitenoise
+dj-database-url
+psycopg[binary]

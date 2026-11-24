@@ -1,11 +1,12 @@
 import requests
+from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Max, Min, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from django.http import HttpResponse
+
 from . import supabase_client as sb
 from .forms import FormContato, FormServico
 from .models import Categoria, Contato, Pedido, Servico
@@ -16,6 +17,11 @@ API_PRODUTOS = "https://fakestoreapi.com/products"
 # ----------------------------------------------------------------------------
 # Páginas públicas
 # ----------------------------------------------------------------------------
+def saude(request):
+    """Rota leve para monitores de uptime (não acessa banco nem APIs)."""
+    return HttpResponse("ok")
+
+
 def index(request):
     return render(request, "index.html")
 
@@ -275,6 +281,3 @@ def relatorios(request):
         "categorias_labels": [i["categoria__nome"] or "Sem categoria" for i in por_categoria],
         "categorias_valores": [i["quantidade"] for i in por_categoria],
     })
-
-def saude(request):
-    return HttpResponse("ok")
