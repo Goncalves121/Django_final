@@ -1,0 +1,25 @@
+{% extends 'template.html' %}
+{% block titulo %}Entrar | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container narrow">
+    <header class="page-head">
+        <span class="eyebrow">Área restrita</span>
+        <h1>Bem-vindo de volta!</h1>
+        <p>Acesse sua conta para continuar utilizando nossa plataforma.</p>
+    </header>
+    <div class="card accent">
+        <h2>Entrar na sua conta</h2>
+        <p class="sub">Informe seus dados de acesso abaixo.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% include '_campos.html' %}
+            <a class="forgot" href="{% url 'password_reset' %}">Esqueceu sua senha?</a>
+            <div class="form-actions"><button class="btn block lg" type="submit">Entrar</button></div>
+        </form>
+        <p class="form-foot">Não tem uma conta? <a class="link-strong" href="{% url 'cadastro' %}">Cadastre-se</a></p>
+    </div>
+    <p class="inline-note">Acesso seguro à plataforma</p>
+</div>
+{% endblock %}

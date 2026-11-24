@@ -1,0 +1,26 @@
+{% extends 'template.html' %}
+{% block titulo %}Meu Perfil | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container narrow">
+    <header class="page-head">
+        <span class="eyebrow">Minha conta</span>
+        <h1>Meu Perfil</h1>
+        <p>Gerencie suas informações pessoais e mantenha seus dados sempre atualizados.</p>
+    </header>
+    <div class="card accent">
+        <h2>Informações pessoais</h2>
+        <p class="sub">Atualize os dados da sua conta.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include '_campos.html' %}
+            <div class="form-actions"><button class="btn block lg" type="submit">Salvar alterações</button></div>
+        </form>
+        <div class="form-foot" style="display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left">
+            <div><b style="color:var(--brand)">Segurança da conta</b><br><span style="font-size:.82rem">Mantenha sua senha atualizada para proteger o acesso à sua conta.</span></div>
+            <a class="btn sm ghost" href="{% url 'alterar_senha' %}">Alterar senha</a>
+        </div>
+    </div>
+    <p style="text-align:center;margin-top:24px"><a class="link-strong" href="{% url 'dashboard' %}">Voltar ao dashboard</a></p>
+</div>
+{% endblock %}

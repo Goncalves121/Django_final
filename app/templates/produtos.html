@@ -1,0 +1,65 @@
+{% extends 'template.html' %}
+{% block titulo %}Produtos | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container">
+    <header class="page-head">
+        <span class="eyebrow">Nosso catálogo</span>
+        <h1>Produtos e Serviços</h1>
+        <p>Confira nossas ofertas e descubra opções selecionadas especialmente para você.</p>
+    </header>
+
+    <section>
+        <h2>Serviços da Nossa Loja</h2>
+        <p class="sub muted" style="margin-bottom:20px">Produtos cadastrados diretamente em nosso site.</p>
+        <div class="grid cols-4">
+            {% for p in produtos %}
+            <article class="card product">
+                <div class="thumb cover">
+                    {% if p.imagem %}<img src="{{ p.imagem.url }}" alt="{{ p.nome }}" loading="lazy">{% else %}<span class="ph">{{ p.nome|first|upper }}</span>{% endif %}
+                </div>
+                <div class="body">
+                    {% if p.categoria %}<span class="tag">{{ p.categoria.nome }}</span>{% endif %}
+                    <h3>{{ p.nome }}</h3>
+                    <p>{{ p.descricao }}</p>
+                    <div class="foot">
+                        <span class="price">R$ {{ p.preco|floatformat:"2g" }}</span>
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'comprar' p.id %}">
+                                {% csrf_token %}
+                                <button class="btn sm" type="submit">Comprar</button>
+                            </form>
+                        {% else %}
+                            <a class="btn sm" href="{% url 'login' %}?next={% url 'produtos' %}" title="Entre para comprar">Comprar</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+                <p class="muted">Nenhum serviço disponível no momento.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Produtos das Lojas Parceiras</h2>
+        <p class="sub muted" style="margin-bottom:20px">Confira nossos produtos disponíveis em nosso catálogo parceiro.</p>
+        {% if erro_api %}<div class="alert alert-warning">Não foi possível carregar os produtos parceiros agora.</div>{% endif %}
+        <div class="grid cols-4">
+            {% for prod in produtos_api %}
+            <article class="card product">
+                <div class="thumb"><img src="{{ prod.image }}" alt="{{ prod.title }}" loading="lazy"></div>
+                <div class="body">
+                    <span class="tag">{{ prod.category }}</span>
+                    <h3>{{ prod.title }}</h3>
+                    <p>{{ prod.description }}</p>
+                    <div class="foot"><span class="price">US$ {{ prod.price|floatformat:"2g" }}</span></div>
+                </div>
+            </article>
+            {% empty %}
+                {% if not erro_api %}<p class="muted">Nenhum produto encontrado na API.</p>{% endif %}
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

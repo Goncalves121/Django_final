@@ -1,0 +1,24 @@
+{% extends 'template.html' %}
+{% block titulo %}Dashboard | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container wide">
+    <section class="welcome">
+        <span class="eyebrow">Painel do usuário</span>
+        <h1>Olá, {{ user.first_name|default:user.username }}!</h1>
+        <p>Bem-vindo ao seu painel de controle. Escolha uma das opções abaixo para continuar.</p>
+    </section>
+
+    <h2>Meu espaço</h2>
+    <p class="muted" style="margin:4px 0 20px">Gerencie suas informações, acompanhe seus pedidos e acesse as funcionalidades disponíveis na plataforma.</p>
+
+    <div class="grid cols-2">
+        <a class="card tile" href="{% url 'perfil' %}"><div class="ico">👤</div><small>Minha conta</small><h3>Editar Perfil</h3><p>Consulte e atualize seus dados pessoais, informações e preferências.</p><span class="go">Acessar perfil →</span></a>
+        <a class="card tile" href="{% url 'contatos' %}"><div class="ico">💬</div><small>Comunicação</small><h3>Contatos</h3><p>Consulte e gerencie os contatos cadastrados na plataforma.</p><span class="go">Gerenciar contatos →</span></a>
+        <a class="card tile" href="{% url 'servicos' %}"><div class="ico">🛠️</div><small>Gerenciamento</small><h3>Serviços</h3><p>Cadastre, consulte e gerencie os serviços disponíveis no sistema.</p><span class="go">Gerenciar serviços →</span></a>
+        <a class="card tile" href="{% url 'integrantes' %}"><div class="ico">👥</div><small>Nossa equipe</small><h3>Equipe</h3><p>Gerencie os integrantes, cargos, biografias e informações da equipe.</p><span class="go">Gerenciar equipe →</span></a>
+        <a class="card tile" href="{% url 'meus_pedidos' %}"><div class="ico">🛒</div><small>Minhas compras</small><h3>Meus Pedidos</h3><p>Consulte seus serviços adquiridos, acompanhe suas compras e visualize os valores.</p><span class="go">Visualizar pedidos →</span></a>
+        <a class="card tile" href="{% url 'relatorios' %}"><div class="ico">📊</div><small>Análises</small><h3>Relatórios</h3><p>Consulte informações, dados e estatísticas sobre os serviços e pedidos da plataforma.</p><span class="go">Acessar relatórios →</span></a>
+    </div>
+</div>
+{% endblock %}

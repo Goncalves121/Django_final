@@ -1,0 +1,34 @@
+{% extends 'template.html' %}
+{% block titulo %}{% if modo == 'editar' %}Editar Integrante{% else %}Novo Integrante{% endif %} | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container mid">
+    <header class="page-head">
+        <span class="eyebrow">Nossa equipe</span>
+        <h1>{% if modo == 'editar' %}Editar Integrante{% else %}Novo Integrante{% endif %}</h1>
+        <p>{% if modo == 'editar' %}Atualize as informações do integrante selecionado em nossa equipe.{% else %}Cadastre um novo integrante e apresente sua função e contribuição para nossa equipe.{% endif %}</p>
+    </header>
+    <div class="card accent">
+        <h2>Informações do integrante</h2>
+        <p class="sub">{% if modo == 'editar' %}Altere os campos abaixo.{% else %}Preencha os dados abaixo para realizar o cadastro.{% endif %}</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="field"><label for="nome">Nome completo</label>
+                <input class="input" type="text" name="nome" id="nome" placeholder="Digite o nome do integrante" value="{{ integrante.nome|default:'' }}" required></div>
+            <div class="field"><label for="cargo">Cargo</label>
+                <input class="input" type="text" name="cargo" id="cargo" placeholder="Ex.: Desenvolvedor Web" value="{{ integrante.cargo|default:'' }}" required></div>
+            <div class="field"><label for="biografia">Biografia</label>
+                <textarea class="input" name="biografia" id="biografia" rows="4" placeholder="Conte um pouco sobre o integrante...">{{ integrante.biografia|default:'' }}</textarea></div>
+            <div class="field"><label for="foto">Foto (URL)</label>
+                <input class="input" type="url" name="foto" id="foto" placeholder="https://exemplo.com/foto.jpg" value="{{ integrante.foto_url|default:'' }}">
+                <div class="help">Informe o endereço de uma imagem pública.</div>
+                {% if integrante.foto_url %}<img class="preview" src="{{ integrante.foto_url }}" alt="Pré-visualização">{% endif %}
+            </div>
+            <div class="form-actions">
+                <button class="btn block lg" type="submit">{% if modo == 'editar' %}Salvar Alterações{% else %}Cadastrar Integrante{% endif %}</button>
+                <a class="btn block ghost" href="{% url 'integrantes' %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

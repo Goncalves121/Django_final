@@ -1,0 +1,46 @@
+{% load static %}<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Django{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=10">
+</head>
+<body>
+    {% with rota=request.resolver_match.url_name %}
+    <header class="site-header">
+        <div class="bar">
+            <a class="brand" href="{% url 'index' %}"><span class="logo">dj</span> Django</a>
+            <nav class="nav">
+                <a href="{% url 'quem_somos' %}" class="{% if rota == 'quem_somos' %}ativo{% endif %}">Quem Somos</a>
+                <a href="{% url 'produtos' %}" class="{% if rota == 'produtos' %}ativo{% endif %}">Produtos</a>
+                <a href="{% url 'add_contato' %}" class="{% if rota == 'add_contato' %}ativo{% endif %}">Contato</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="cta">Dashboard</a>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="link outline">Sair</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="cta">Entrar</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    {% endwith %}
+
+    {% if messages %}
+    <div class="messages">
+        {% for m in messages %}
+            <div class="alert alert-{{ m.level_tag|default:'info' }}">{{ m }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">© {% now "Y" %} Django • Projeto WEB III — FATEC Praia Grande</footer>
+</body>
+</html>

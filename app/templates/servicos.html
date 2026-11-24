@@ -1,0 +1,87 @@
+{% extends 'template.html' %}
+{% load query_tags %}
+{% block titulo %}Serviços | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container wide">
+    <div class="head-row">
+        <div>
+            <span class="eyebrow">Painel administrativo</span>
+            <h1>Gerenciamento de Serviços</h1>
+            <p>Gerencie, consulte e acompanhe seus serviços.</p>
+        </div>
+        <a class="btn" href="{% url 'addServicos' %}">+ Novo Serviço</a>
+    </div>
+
+    <div class="grid cols-4">
+        <div class="card stat"><small>Total de serviços</small><b>{{ total_servicos }}</b></div>
+        <div class="card stat"><small>Menor preço</small><b>{% if mais_barato is not None %}R$ {{ mais_barato|floatformat:"2g" }}{% else %}—{% endif %}</b></div>
+        <div class="card stat"><small>Maior preço</small><b>{% if mais_caro is not None %}R$ {{ mais_caro|floatformat:"2g" }}{% else %}—{% endif %}</b></div>
+        <div class="card stat"><small>Situação</small><b>{{ ativos }} ativo{{ ativos|pluralize }}</b><span>{{ inativos }} inativo{{ inativos|pluralize }}</span></div>
+    </div>
+
+    <div class="card filters section">
+        <h2>Filtros e pesquisa</h2>
+        <p class="sub">Encontre rapidamente o serviço desejado.</p>
+
+        <form method="get" class="search">
+            <input class="input" type="text" name="busca" placeholder="Pesquisar serviço pelo nome..." value="{{ busca }}">
+            {% if categoria %}<input type="hidden" name="categoria" value="{{ categoria }}">{% endif %}
+            {% if preco %}<input type="hidden" name="preco" value="{{ preco }}">{% endif %}
+            {% if ordem %}<input type="hidden" name="ordem" value="{{ ordem }}">{% endif %}
+            <button class="btn" type="submit">Buscar</button>
+        </form>
+
+        <div class="row">
+            <span class="label">Filtrar por categoria</span>
+            {% for c in categorias %}
+                <a class="chip {% if categoria == c.id|stringformat:'s' %}on{% endif %}" href="{% qs categoria=c.id %}">{{ c.nome }}</a>
+            {% empty %}<span class="muted">Nenhuma categoria ativa.</span>{% endfor %}
+        </div>
+        <div class="row">
+            <span class="label">Filtrar por preço</span>
+            <a class="chip {% if preco == 'baixo' %}on{% endif %}" href="{% qs preco='baixo' %}">Até R$ 500</a>
+            <a class="chip {% if preco == 'medio' %}on{% endif %}" href="{% qs preco='medio' %}">R$ 500 – R$ 1.500</a>
+            <a class="chip {% if preco == 'alto' %}on{% endif %}" href="{% qs preco='alto' %}">Acima de R$ 1.500</a>
+        </div>
+        <div class="row">
+            <span class="label">Ordenar serviços</span>
+            <a class="chip {% if ordem == 'menor' %}on{% endif %}" href="{% qs ordem='menor' %}">Menor preço</a>
+            <a class="chip {% if ordem == 'maior' %}on{% endif %}" href="{% qs ordem='maior' %}">Maior preço</a>
+            <a class="chip {% if ordem == 'nome' %}on{% endif %}" href="{% qs ordem='nome' %}">Nome</a>
+            {% if filtrado %}<a class="chip clear" href="{% url 'servicos' %}">Limpar filtros</a>{% endif %}
+        </div>
+    </div>
+
+    <div class="card section">
+        <h2>Serviços cadastrados</h2>
+        <p class="sub">{{ servicos|length }} resultado{{ servicos|length|pluralize }} na lista atual.</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Imagem</th><th>Serviço</th><th>Descrição</th><th>Categoria</th><th>Preço</th><th>Situação</th><th>Ações</th></tr></thead>
+                <tbody>
+                {% for s in servicos %}
+                    <tr>
+                        <td>{% if s.imagem %}<img class="thumb-sm" src="{{ s.imagem.url }}" alt="{{ s.nome }}">{% else %}<div class="avatar" style="border-radius:10px;width:52px;height:52px">{{ s.nome|first|upper }}</div>{% endif %}</td>
+                        <td><b>{{ s.nome }}</b></td>
+                        <td class="muted" style="max-width:240px">{{ s.descricao|truncatechars:70 }}</td>
+                        <td>{{ s.categoria|default:"—" }}</td>
+                        <td style="white-space:nowrap"><b>R$ {{ s.preco|floatformat:"2g" }}</b></td>
+                        <td>{% if s.ativo %}<span class="badge on">Ativo</span>{% else %}<span class="badge off">Inativo</span>{% endif %}</td>
+                        <td class="actions">
+                            <a class="btn sm ghost" href="{% url 'editServicos' s.id %}">Editar</a>
+                            <form method="post" action="{% url 'delServicos' s.id %}" onsubmit="return confirm('Excluir o serviço “{{ s.nome|escapejs }}”?')">
+                                {% csrf_token %}<button class="btn sm danger" type="submit">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="empty">Nenhum serviço encontrado.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p style="text-align:center;margin-top:24px"><a class="link-strong" href="{% url 'dashboard' %}">← Voltar ao dashboard</a></p>
+</div>
+{% endblock %}

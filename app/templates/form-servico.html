@@ -1,0 +1,24 @@
+{% extends 'template.html' %}
+{% block titulo %}{% if modo == 'editar' %}Editar Serviço{% else %}Novo Serviço{% endif %} | Django{% endblock %}
+
+{% block conteudo %}
+<div class="container mid">
+    <header class="page-head">
+        <span class="eyebrow">Gerenciamento</span>
+        <h1>{% if modo == 'editar' %}Editar Serviço{% else %}Cadastrar Serviço{% endif %}</h1>
+        <p>{% if modo == 'editar' %}Altere as informações do serviço cadastrado no catálogo.{% else %}Preencha as informações abaixo para adicionar um serviço ao catálogo.{% endif %}</p>
+    </header>
+    <div class="card accent">
+        <h2>Informações do Serviço</h2>
+        <p class="sub">Informe os dados necessários abaixo.</p>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% include '_campos.html' %}
+            <div class="form-actions">
+                <button class="btn block lg" type="submit">{% if modo == 'editar' %}Salvar Alterações{% else %}Cadastrar Serviço{% endif %}</button>
+                <a class="btn block ghost" href="{% url 'servicos' %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
