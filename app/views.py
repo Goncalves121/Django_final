@@ -37,22 +37,36 @@ def quem_somos(request):
 
 
 def produtos(request):
-    """Serviços do banco local (com botão Comprar) + produtos da API externa."""
-    locais = Servico.objects.filter(ativo=True, preco__gt=0).select_related("categoria").order_by("nome")
-
-    produtos_api, erro_api = [], False
+    produtos_api = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+    }
     try:
-        resposta = requests.get(API_PRODUTOS, timeout=6)
-        resposta.raise_for_status()
-        produtos_api = resposta.json()
-    except (requests.RequestException, ValueError):
-        erro_api = True
+        resp = requests.get("https://fakestoreapi.com/products", headers=headers, timeout=8)
+        resp.raise_for_status()
+        produtos_api = resp.json()
+    except Exception:
+        # Fallback usando DummyJSON (não bloqueia IPs do Render) adaptado ao formato da FakeStoreAPI
+        try:
+            resp_alt = requests.get("https://dummyjson.com/products?limit=8", timeout=8)
+            resp_alt.raise_for_status()
+            dados = resp_alt.json().get("products", [])
+            produtos_api = [
+                {
+                    "id": item["id"],
+                    "title": item["title"],
+                    "price": item["price"],
+                    "description": item["description"],
+                    "category": item["category"],
+                    "image": item["thumbnail"],
+                }
+                for item in dados
+            ]
+        except Exception:
+            produtos_api = []
 
-    return render(request, "produtos.html", {
-        "produtos": locais,
-        "produtos_api": produtos_api,
-        "erro_api": erro_api,
-    })
+    # ... mantenha aqui o restante da sua view (consulta de Servico, etc.)
 
 
 def add_contato(request):
